@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог книг{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>📚 Каталог книг</h1>
+    <a href="{{ url_for('add_book') }}" class="btn btn-primary">+ Додати книгу</a>
+</div>
+
+<div class="table-container">
+
+    {% if books %}
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>ISBN</th>
+            <th>Рік</th>
+            <th>Ціна</th>
+            <th>Склад</th>
+            <th>Автор</th>
+            <th>Категорії</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book[0] }}</td>
+            <td class="name-col">{{ book[1] }}</td>
+            <td>{{ book[2] }}</td>
+            <td>{{ book[3] }}</td>
+
+            <td>{{ book[4] }} грн</td>
+            <td>{{ book[5] }}</td>
+
+            <td>{{ book[6] }}</td>
+
+            <td class="cat-list">
+                {% if book[7] %}
+                    {{ book[7] }}
+                {% else %}
+                    <span class="no-cat">—</span>
+                {% endif %}
+            </td>
+
+            <td class="actions">
+                <a href="{{ url_for('edit_book', book_id=book[0]) }}"
+                   class="btn btn-small btn-edit">✏️</a>
+
+                <a href="{{ url_for('delete_book', book_id=book[0]) }}"
+                   class="btn btn-small btn-delete"
+                   onclick="return confirm('Ви впевнені, що хочете видалити цю книгу?')">🗑️</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+    {% else %}
+        <p class="empty-msg">Немає жодної книги. Додайте першу!</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

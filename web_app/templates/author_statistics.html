@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика авторів{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>📈 Статистика авторів</h1>
+</div>
+
+<div class="table-container">
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Автор</th>
+            <th>Країна</th>
+            <th>Книг</th>
+            <th>Сер. ціна</th>
+            <th>На складі</th>
+            <th>Перший рік</th>
+            <th>Останній рік</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for s in stats %}
+        <tr>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+            <td>{{ s[4] }}</td>
+            <td>{{ s[5] }}</td>
+            <td>{{ s[6] }}</td>
+            <td>{{ s[7] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

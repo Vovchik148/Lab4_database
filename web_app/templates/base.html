@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BookStore — Керування бібліотекою{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2991/2991115.png">
+</head>
+
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <a class="logo" href="{{ url_for('index') }}">📘 BookStore</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('dashboard') }}">📊 Панель</a></li>
+                <li><a href="{{ url_for('books') }}">📚 Книги</a></li>
+                <li><a href="{{ url_for('authors') }}">👤 Автори</a></li>
+                <li><a href="{{ url_for('categories') }}">🏷 Категорії</a></li>
+                <li><a href="{{ url_for('author_statistics') }}">📈 Статистика авторів</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-wrapper">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <span>{{ message }}</span>
+                <button class="close-btn" onclick="this.parentElement.remove()">✖</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 BookStore App | Лабораторна робота №4 | Flask + PostgreSQL</p>
+    </footer>
+</body>
+
+
+</html>

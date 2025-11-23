@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Головна{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📘 Ласкаво просимо до BookStore</h1>
+</div>
+
+<p>Це веб-застосунок для керування книжковим магазином. Оберіть розділ у меню зверху.</p>
+
+<div class="home-actions">
+    <a class="btn btn-primary" href="{{ url_for('dashboard') }}">➡️ Перейти до панелі керування</a>
+</div>
+{% endblock %}

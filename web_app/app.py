@@ -4,12 +4,11 @@ from database import DatabaseConnection
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-in-production'
 
-# Підключення до БД (PostgreSQL у Docker)
 db = DatabaseConnection(
     dbname='bookstore',
     user='postgres',
     password='password',
-    host='localhost',   # якщо Flask на хості
+    host='localhost',
     port=5432
 )
 db.connect()
@@ -25,7 +24,6 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    # Проста статистика для дашборду
     counts = {}
 
     for name, table in [
@@ -44,7 +42,6 @@ def dashboard():
 # ------------------------------------------------
 @app.route('/books')
 def books():
-    # Витягуємо книги + автора + список категорій через string_agg
     query = """
         SELECT 
             b.book_id,
@@ -76,9 +73,8 @@ def add_book():
         price = float(request.form['price'])
         stock = int(request.form['stock'])
         author_id = int(request.form['author_id'])
-        category_ids = request.form.getlist('categories')  # список строкових id
+        category_ids = request.form.getlist('categories')
 
-        # Додаємо книгу
         insert_book = """
             INSERT INTO books (book_name, isbn, publication_year, price, stock_quantity, author_id)
             VALUES (%s, %s, %s, %s, %s, %s)
@@ -92,7 +88,6 @@ def add_book():
 
         book_id = cursor.fetchone()[0]
 
-        # Прив'язуємо категорії (багато-до-багатьох)
         if category_ids:
             insert_bc = """
                 INSERT INTO books_categories (book_id, category_id)
@@ -104,7 +99,6 @@ def add_book():
         flash('Книгу успішно додано!', 'success')
         return redirect(url_for('books'))
 
-    # GET: показати форму
     authors_q = "SELECT author_id, name FROM authors ORDER BY name"
     cursor_a = db.execute_query(authors_q)
     authors = cursor_a.fetchall() if cursor_a else []
@@ -139,7 +133,6 @@ def edit_book(book_id):
             flash('Помилка оновлення книги', 'error')
             return redirect(url_for('books'))
 
-        # Очищаємо старі зв'язки категорій і додаємо нові
         db.execute_query("DELETE FROM books_categories WHERE book_id = %s", (book_id,))
         insert_bc = "INSERT INTO books_categories (book_id, category_id) VALUES (%s, %s)"
         for cid in category_ids:
@@ -148,7 +141,6 @@ def edit_book(book_id):
         flash('Книгу успішно оновлено!', 'success')
         return redirect(url_for('books'))
 
-    # GET: витягуємо книгу
     book_q = """
         SELECT 
             b.book_id,
@@ -170,12 +162,10 @@ def edit_book(book_id):
         flash('Книгу не знайдено', 'error')
         return redirect(url_for('books'))
 
-    # поточні категорії книги
     current_cq = "SELECT category_id FROM books_categories WHERE book_id = %s"
     cursor_cc = db.execute_query(current_cq, (book_id,))
     current_categories = {row[0] for row in cursor_cc.fetchall()} if cursor_cc else set()
 
-    # всі автори і категорії для списків
     authors_q = "SELECT author_id, name FROM authors ORDER BY name"
     cursor_a = db.execute_query(authors_q)
     authors = cursor_a.fetchall() if cursor_a else []
@@ -195,7 +185,6 @@ def edit_book(book_id):
 
 @app.route('/books/delete/<int:book_id>')
 def delete_book(book_id):
-    # Спочатку видаляємо зв'язки з категоріями
     db.execute_query("DELETE FROM books_categories WHERE book_id = %s", (book_id,))
     cursor = db.execute_query("DELETE FROM books WHERE book_id = %s", (book_id,))
 
@@ -270,7 +259,6 @@ def edit_author(author_id):
 
 @app.route('/authors/delete/<int:author_id>')
 def delete_author(author_id):
-    # Якщо є книги цього автора — БД може не дати видалити (FK). Просто ловимо результат.
     cursor = db.execute_query("DELETE FROM authors WHERE author_id = %s", (author_id,))
 
     if cursor:
@@ -334,7 +322,6 @@ def edit_category(category_id):
 
 @app.route('/categories/delete/<int:category_id>')
 def delete_category(category_id):
-    # Спочатку прибираємо зв'язки з книгами
     db.execute_query("DELETE FROM books_categories WHERE category_id = %s", (category_id,))
     cursor = db.execute_query("DELETE FROM categories WHERE category_id = %s", (category_id,))
 

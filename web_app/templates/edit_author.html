@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Редагувати автора{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>✏️ Редагування автора</h1>
+</div>
+
+<form method="POST" class="form-container">
+
+    <label>Ім’я та прізвище:</label>
+    <input name="name" value="{{ author[1] }}" required>
+
+    <label>Рік народження:</label>
+    <input type="number" name="birth_year" value="{{ author[2] }}">
+
+    <label>Країна:</label>
+    <input name="country" value="{{ author[3] }}">
+
+    <button class="btn btn-primary">Зберегти</button>
+</form>
+
+{% endblock %}
