@@ -47,3 +47,24 @@ class DatabaseConnection:
                 self.conn.rollback()
 
             return None
+        
+    def get_all_books(self):
+        query = """
+            SELECT 
+                b.book_id,
+                b.book_name,
+                b.isbn,
+                b.publication_year,
+                b.price,
+                b.stock_quantity,
+                a.name AS author_name,
+                COALESCE(string_agg(c.category_name, ', ' ORDER BY c.category_name), '') AS categories
+            FROM books b
+            INNER JOIN authors a ON b.author_id = a.author_id
+            LEFT JOIN books_categories bc ON b.book_id = bc.book_id
+            LEFT JOIN categories c ON bc.category_id = c.category_id
+            GROUP BY b.book_id, b.book_name, b.isbn, b.publication_year, b.price, b.stock_quantity, a.name
+            ORDER BY b.book_name;
+        """
+        cursor = self.execute_query(query)
+        return cursor.fetchall() if cursor else []

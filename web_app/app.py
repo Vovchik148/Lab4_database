@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 from db import DatabaseConnection
+from reports import generate_books_report
 import os, sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -336,7 +337,7 @@ def delete_category(category_id):
 
 
 # ------------------------------------------------
-# СТАТИСТИКА АВТОРІВ (VIEW author_statistics)
+# СТАТИСТИКА АВТОРІВ
 # ------------------------------------------------
 @app.route('/author_statistics')
 def author_statistics():
@@ -345,6 +346,16 @@ def author_statistics():
     stats = cursor.fetchall() if cursor else []
 
     return render_template('author_statistics.html', stats=stats)
+
+# ------------------------------------------------
+# ЗАВАНТАЖЕННЯ ЗВІТУ
+# ------------------------------------------------
+@app.route("/reports/books")
+def report_books():
+    books = db.get_all_books()
+    filename = generate_books_report(books)
+    return send_file(filename, as_attachment=True)
+
 
 
 # ------------------------------------------------
