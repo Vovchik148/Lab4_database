@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from database import DatabaseConnection
+from db import DatabaseConnection
+import os, sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-in-production'

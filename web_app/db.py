@@ -1,5 +1,4 @@
 import psycopg2
-from psycopg2 import sql
 
 class DatabaseConnection:
     def __init__(self, dbname='bookstore', user='postgres',
@@ -16,22 +15,35 @@ class DatabaseConnection:
     def connect(self):
         try:
             self.conn = psycopg2.connect(**self.conn_params)
-            print("Успішне підключення до бази даних")
+            print("Connection established.")
         except Exception as e:
-            print(f"Помилка підключення: {e}")
+            print("Connection error:")
+            print(str(e).encode('utf-8', 'replace'))
+            self.conn = None
 
     def disconnect(self):
         if self.conn:
             self.conn.close()
-            print("З'єднання закрито")
+            print("Connection closed.")
 
     def execute_query(self, query, params=None):
+        if not self.conn:
+            print("No active DB connection!")
+            return None
+
         try:
             cursor = self.conn.cursor()
             cursor.execute(query, params)
             self.conn.commit()
             return cursor
+
         except Exception as e:
-            self.conn.rollback()
-            print(f"Помилка виконання запиту: {e}")
+            print("SQL error:")
+            print("Query:", query)
+            print("Params:", params)
+            print(str(e).encode('utf-8', 'replace'))
+
+            if self.conn:
+                self.conn.rollback()
+
             return None
