@@ -5,12 +5,9 @@ import io
 import base64
 
 def create_author_statistics_chart(db):
-    """
-    Створення графіка статистики по авторам — топ 10 за кількістю книг
-    """
     query = """
         SELECT 
-            CONCAT(a.first_name, ' ', a.last_name) AS full_name,
+            a.name AS full_name,
             COUNT(b.book_id) AS books_count
         FROM authors a
         LEFT JOIN books b ON a.author_id = b.author_id
@@ -54,10 +51,8 @@ def create_author_statistics_chart(db):
     return encoded
 
 
+
 def create_price_distribution_chart(db):
-    """
-    Гістограма розподілу цін на книги
-    """
     query = "SELECT price FROM books ORDER BY price;"
     cursor = db.execute_query(query)
     data = cursor.fetchall() if cursor else []
