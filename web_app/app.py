@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 from db import DatabaseConnection
 from reports import generate_books_report
+from api import setup_api_routes
+from charts import create_author_statistics_chart, create_price_distribution_chart
 import os, sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here-change-in-production'
+app.secret_key = 'secret_key'
 
 db = DatabaseConnection(
     dbname='bookstore',
@@ -16,6 +18,7 @@ db = DatabaseConnection(
 )
 db.connect()
 
+setup_api_routes(app, db)
 
 # ------------------------------------------------
 # ГОЛОВНІ СТОРІНКИ
@@ -346,6 +349,21 @@ def author_statistics():
     stats = cursor.fetchall() if cursor else []
 
     return render_template('author_statistics.html', stats=stats)
+
+# ------------------------------------------------
+# ВІЗУАЛІЗАЦІЯ СТАТИСТИКИ
+# ------------------------------------------------
+@app.route("/statistics")
+def statistics_page():
+    author_chart = create_author_statistics_chart(db)
+    price_chart = create_price_distribution_chart(db)
+
+    return render_template(
+        "statistics.html",
+        author_chart=author_chart,
+        price_chart=price_chart
+    )
+
 
 # ------------------------------------------------
 # ЗАВАНТАЖЕННЯ ЗВІТУ

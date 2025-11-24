@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Аналітика{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>📊 Аналітика</h1>
+</div>
+
+<div class="hero">
+    <p class="hero-text">
+        На цій сторінці зібрані графічні звіти, що відображають активність авторів та розподіл цін у каталозі книг.
+    </p>
+</div>
+
+<br>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h2>Топ-10 авторів за кількістю книг</h2>
+        {% if author_chart %}
+            <img src="data:image/png;base64,{{ author_chart }}" style="width:100%; border-radius: 12px;">
+        {% else %}
+            <p class="text-muted">Недостатньо даних для побудови графіка</p>
+        {% endif %}
+    </div>
+
+    <div class="stat-card">
+        <h2>Розподіл цін на книги</h2>
+        {% if price_chart %}
+            <img src="data:image/png;base64,{{ price_chart }}" style="width:100%; border-radius: 12px;">
+        {% else %}
+            <p class="text-muted">Недостатньо даних для побудови графіка</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
